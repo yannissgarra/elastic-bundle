@@ -1,0 +1,36 @@
+framework:
+    test: true
+    secret: test
+    http_method_override: false
+
+webmunkeez_elastic:
+    hosts: ['http://elasticsearch:9200']
+    indices:
+        post:
+            settings:
+                analysis:
+                    filter:
+                        french_stop:
+                            type: stop
+                            stopwords: _french_
+                        french_stemmer:
+                            type: stemmer
+                            language: light_french
+                    analyzer:
+                        french:
+                            tokenizer: standard
+                            filter:
+                                - lowercase
+                                - french_stop
+                                - french_stemmer
+            mappings:
+                properties:
+                    title_fr:
+                        type: text
+                        analyzer: french
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
