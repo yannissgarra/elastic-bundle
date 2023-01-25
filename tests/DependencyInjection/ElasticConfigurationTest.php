@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * (c) Yannis Sgarra <hello@yannissgarra.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace Webmunkeez\ElasticBundle\Test\DependencyInjection;
@@ -9,6 +16,9 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Webmunkeez\ElasticBundle\DependencyInjection\Configuration;
 
+/**
+ * @author Yannis Sgarra <hello@yannissgarra.com>
+ */
 final class ElasticConfigurationTest extends TestCase
 {
     public const DATA = [

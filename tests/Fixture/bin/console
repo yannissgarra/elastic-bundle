@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+
+/*
+ * (c) Yannis Sgarra <hello@yannissgarra.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Webmunkeez\ElasticBundle\Test\Fixture\TestKernel;
+
+if (!is_file(dirname(__DIR__).'/../../vendor/autoload_runtime.php')) {
+    throw new LogicException('Symfony Runtime is missing. Try running "composer require symfony/runtime".');
+}
+
+require_once dirname(__DIR__).'/../../vendor/autoload_runtime.php';
+
+return function (array $context) {
+    $kernel = new TestKernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
+
+    return new Application($kernel);
+};
