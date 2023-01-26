@@ -1,6 +1,6 @@
 # WebmunkeezElasticBundle
 
-This bundle unleashes a internationalization on Symfony applications.
+This bundle unleashes elasticsearch on Symfony applications.
 
 ## Installation
 
