@@ -23,7 +23,7 @@ final class WebmunkeezElasticExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
-        $loader = new PhpFileLoader($container, new FileLocator(__DIR__.'/../../config'));
+        $loader = new PhpFileLoader($container, new FileLocator(__DIR__.'/../../config'), $container->getParameter('kernel.environment'));
         $loader->load('client.php');
         $loader->load('console.php');
 
