@@ -19,7 +19,7 @@ use Webmunkeez\ElasticBundle\DependencyInjection\Configuration;
 /**
  * @author Yannis Sgarra <hello@yannissgarra.com>
  */
-final class ElasticConfigurationTest extends TestCase
+final class ConfigurationTest extends TestCase
 {
     public const DATA = [
         'hosts' => [
