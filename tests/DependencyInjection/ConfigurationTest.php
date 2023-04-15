@@ -78,21 +78,23 @@ final class ConfigurationTest extends TestCase
 
     public function testProcessWithoutIndicesConfigurationShouldThrowException()
     {
-        $this->expectException(InvalidConfigurationException::class);
-
         $config = self::DATA;
         unset($config['indices']);
 
-        (new Processor())->processConfiguration(new Configuration(), ['webmunkeez_elastic' => $config]);
+        $processedConfig = (new Processor())->processConfiguration(new Configuration(), ['webmunkeez_elastic' => $config]);
+
+        $config['indices'] = [];
+
+        $this->assertEqualsCanonicalizing($config, $processedConfig);
     }
 
     public function testProcessWithoutAtLeastOneIndexConfigurationShouldThrowException()
     {
-        $this->expectException(InvalidConfigurationException::class);
-
         $config = self::DATA;
         $config['indices'] = [];
 
-        (new Processor())->processConfiguration(new Configuration(), ['webmunkeez_elastic' => $config]);
+        $processedConfig = (new Processor())->processConfiguration(new Configuration(), ['webmunkeez_elastic' => $config]);
+
+        $this->assertEqualsCanonicalizing($config, $processedConfig);
     }
 }

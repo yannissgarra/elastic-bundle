@@ -31,8 +31,6 @@ final class Configuration implements ConfigurationInterface
                     ->scalarPrototype()->end()
                 ->end()
                 ->arrayNode('indices')
-                    ->isRequired()
-                    ->requiresAtLeastOneElement()
                     ->variablePrototype()->end()
                 ->end()
             ->end();
