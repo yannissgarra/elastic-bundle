@@ -29,12 +29,15 @@ final class DeleteIndexConsoleCommand extends Command
 
     private array $elasticIndicesConfig;
 
-    public function __construct(ElasticClientInterface $elasticClient, array $elasticIndicesConfig)
+    private string $env;
+
+    public function __construct(ElasticClientInterface $elasticClient, array $elasticIndicesConfig, string $env)
     {
         parent::__construct();
 
         $this->elasticClient = $elasticClient;
         $this->elasticIndicesConfig = $elasticIndicesConfig;
+        $this->env = $env;
     }
 
     protected function configure(): void
@@ -54,10 +57,10 @@ final class DeleteIndexConsoleCommand extends Command
 
         try {
             $this->elasticClient->deleteIndices([
-                'index' => $input->getArgument('index_name'),
+                'index' => $input->getArgument('index_name').'_'.$this->env,
             ]);
 
-            $output->writeln('The index `'.$input->getArgument('index_name').'` has been deleted.');
+            $output->writeln('The index `'.$input->getArgument('index_name').'_'.$this->env.'` has been deleted.');
         } catch (ClientResponseException $e) {
             if (
                 Response::HTTP_NOT_FOUND === $e->getCode()
@@ -66,7 +69,7 @@ final class DeleteIndexConsoleCommand extends Command
                 throw $e;
             }
 
-            $output->writeln('The index `'.$input->getArgument('index_name').'` has not been deleted cause it did not exist.');
+            $output->writeln('The index `'.$input->getArgument('index_name').'_'.$this->env.'` has not been deleted cause it did not exist.');
         }
 
         return Command::SUCCESS;

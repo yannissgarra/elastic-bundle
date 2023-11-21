@@ -26,12 +26,15 @@ final class CreateIndexConsoleCommand extends Command
 
     private array $elasticIndicesConfig;
 
-    public function __construct(ElasticClientInterface $elasticClient, array $elasticIndicesConfig)
+    private string $env;
+
+    public function __construct(ElasticClientInterface $elasticClient, array $elasticIndicesConfig, string $env)
     {
         parent::__construct();
 
         $this->elasticClient = $elasticClient;
         $this->elasticIndicesConfig = $elasticIndicesConfig;
+        $this->env = $env;
     }
 
     protected function configure(): void
@@ -49,11 +52,11 @@ final class CreateIndexConsoleCommand extends Command
         }
 
         $this->elasticClient->createIndices([
-            'index' => $input->getArgument('index_name'),
+            'index' => $input->getArgument('index_name').'_'.$this->env,
             'body' => $this->elasticIndicesConfig[$input->getArgument('index_name')],
         ]);
 
-        $output->writeln('The index `'.$input->getArgument('index_name').'` has been created.');
+        $output->writeln('The index `'.$input->getArgument('index_name').'_'.$this->env.'` has been created.');
 
         return Command::SUCCESS;
     }

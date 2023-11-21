@@ -26,12 +26,15 @@ final class UpdateIndexConsoleCommand extends Command
 
     private array $elasticIndicesConfig;
 
-    public function __construct(ElasticClientInterface $elasticClient, array $elasticIndicesConfig)
+    private string $env;
+
+    public function __construct(ElasticClientInterface $elasticClient, array $elasticIndicesConfig, string $env)
     {
         parent::__construct();
 
         $this->elasticClient = $elasticClient;
         $this->elasticIndicesConfig = $elasticIndicesConfig;
+        $this->env = $env;
     }
 
     protected function configure(): void
@@ -49,12 +52,12 @@ final class UpdateIndexConsoleCommand extends Command
         }
 
         $this->elasticClient->closeIndices([
-            'index' => $input->getArgument('index_name'),
+            'index' => $input->getArgument('index_name').'_'.$this->env,
         ]);
 
         if (true === isset($this->elasticIndicesConfig[$input->getArgument('index_name')]['settings'])) {
             $this->elasticClient->putIndicesSettings([
-                'index' => $input->getArgument('index_name'),
+                'index' => $input->getArgument('index_name').'_'.$this->env,
                 'body' => [
                     'settings' => $this->elasticIndicesConfig[$input->getArgument('index_name')]['settings'],
                 ],
@@ -63,7 +66,7 @@ final class UpdateIndexConsoleCommand extends Command
 
         if (true === isset($this->elasticIndicesConfig[$input->getArgument('index_name')]['mappings']['properties'])) {
             $this->elasticClient->putIndicesMapping([
-                'index' => $input->getArgument('index_name'),
+                'index' => $input->getArgument('index_name').'_'.$this->env,
                 'body' => [
                     'properties' => $this->elasticIndicesConfig[$input->getArgument('index_name')]['mappings']['properties'],
                 ],
@@ -71,10 +74,10 @@ final class UpdateIndexConsoleCommand extends Command
         }
 
         $this->elasticClient->openIndices([
-            'index' => $input->getArgument('index_name'),
+            'index' => $input->getArgument('index_name').'_'.$this->env,
         ]);
 
-        $output->writeln('The index `'.$input->getArgument('index_name').'` has been updated.');
+        $output->writeln('The index `'.$input->getArgument('index_name').'_'.$this->env.'` has been updated.');
 
         return Command::SUCCESS;
     }

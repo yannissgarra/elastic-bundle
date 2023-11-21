@@ -19,14 +19,14 @@ use Webmunkeez\ElasticBundle\Console\Command\UpdateIndexConsoleCommand;
 return function (ContainerConfigurator $container) {
     $container->services()
         ->set(CreateIndexConsoleCommand::class)
-            ->args([service(ElasticClientInterface::class), param('webmunkeez_elastic.indices')])
+            ->args([service(ElasticClientInterface::class), param('webmunkeez_elastic.indices'), param('kernel.environment')])
             ->tag('console.command', ['command' => 'elastic:index:create'])
 
         ->set(DeleteIndexConsoleCommand::class)
-            ->args([service(ElasticClientInterface::class), param('webmunkeez_elastic.indices')])
+            ->args([service(ElasticClientInterface::class), param('webmunkeez_elastic.indices'), param('kernel.environment')])
             ->tag('console.command', ['command' => 'elastic:index:delete'])
 
         ->set(UpdateIndexConsoleCommand::class)
-            ->args([service(ElasticClientInterface::class), param('webmunkeez_elastic.indices')])
+            ->args([service(ElasticClientInterface::class), param('webmunkeez_elastic.indices'), param('kernel.environment')])
             ->tag('console.command', ['command' => 'elastic:index:update']);
 };
