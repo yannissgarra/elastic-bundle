@@ -20,7 +20,9 @@ final class ElasticClient implements ElasticClientInterface
 {
     private ElasticClientInterface $decorated;
 
-    private static bool $mock = false;
+    private static self $instance;
+
+    private static array $indexedDocuments = [];
 
     public function __construct(ElasticClientInterface $decorated)
     {
@@ -44,92 +46,75 @@ final class ElasticClient implements ElasticClientInterface
 
     public function bulk(array $params = [])
     {
-        if (true === self::$mock) {
-            return;
+        if (false === isset(self::$instance)) {
+            self::$instance = $this;
         }
+
+        foreach ($params['body'] as $body) {
+            if (true === isset($body['index']['_index']) && true === isset($body['index']['_id'])) {
+                $key = md5($body['index']['_index'].'.'.$body['index']['_id']);
+
+                if (false === isset(self::$indexedDocuments[$key])) {
+                    self::$indexedDocuments[$key] = ['index' => $body['index']['_index'], 'id' => $body['index']['_id']];
+                }
+            }
+        }
+
+        $params['refresh'] = true;
 
         return $this->decorated->bulk($params);
     }
 
     public function delete(array $params = [])
     {
-        if (true === self::$mock) {
-            return;
-        }
+        $params['refresh'] = true;
 
         return $this->decorated->delete($params);
     }
 
     public function createIndices(array $params = [])
     {
-        if (true === self::$mock) {
-            return;
-        }
-
         return $this->decorated->createIndices($params);
     }
 
     public function deleteIndices(array $params = [])
     {
-        if (true === self::$mock) {
-            return;
-        }
-
         return $this->decorated->deleteIndices($params);
     }
 
     public function openIndices(array $params = [])
     {
-        if (true === self::$mock) {
-            return;
-        }
-
         return $this->decorated->openIndices($params);
     }
 
     public function closeIndices(array $params = [])
     {
-        if (true === self::$mock) {
-            return;
-        }
-
         return $this->decorated->closeIndices($params);
     }
 
     public function putIndicesSettings(array $params = [])
     {
-        if (true === self::$mock) {
-            return;
-        }
-
         return $this->decorated->putIndicesSettings($params);
     }
 
     public function putIndicesMapping(array $params = [])
     {
-        if (true === self::$mock) {
-            return;
-        }
-
         return $this->decorated->putIndicesMapping($params);
     }
 
     public function refreshIndices(array $params = [])
     {
-        if (true === self::$mock) {
-            return;
-        }
-
         return $this->decorated->refreshIndices($params);
     }
 
-    public static function setMock(bool $mock): void
+    public static function reset(): void
     {
-        self::$mock = $mock;
-    }
+        if (true === isset(self::$instance)) {
+            foreach (self::$indexedDocuments as $key => $indexedDocument) {
+                self::$instance->delete(['index' => $indexedDocument['index'], 'id' => $indexedDocument['id']]);
 
-    public function mock(bool $mock): void
-    {
-        self::setMock($mock);
+                unset(self::$indexedDocuments[$key]);
+            }
+        }
     }
 }
